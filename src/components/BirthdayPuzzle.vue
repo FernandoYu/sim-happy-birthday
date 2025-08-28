@@ -1,8 +1,8 @@
 <template>
   <div
-    class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-300 via-pink-200 to-orange-200 font-sans space-y-20"
+    class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-300 via-pink-200 to-orange-200 font-birthday space-y-20"
   >
-    <h1 class="text-6xl font-bold text-pink-600 mb-10">🎁 星星生日快乐！</h1>
+    <h1 class="text-6xl font-bold text-pink-600 mb-10 birthday-title">🎁 星星生日快乐！</h1>
     <div
       class="puzzle-size border-3 border-pink-600 rounded-xl overflow-hidden relative"
       ref="puzzleRef"
@@ -47,7 +47,7 @@
         }"
       ></div>
     </div>
-    <p v-show="gameWon" class="text-7xl text-pink-700 font-bold animate-fade-in">
+    <p v-show="gameWon" class="text-7xl text-pink-700 font-bold animate-fade-in birthday-message">
       🎉 2025生日快乐！亲爱的星星 ❤️
     </p>
   </div>
@@ -200,6 +200,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Custom font face definition */
+@font-face {
+  font-family: 'AaKeAiBeiTianTianQuanZhuLiao';
+  src: url('/sim-happy-birthday/fonts/AaKeAiBeiTianTianQuanZhuLiao-2.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Dynamic piece sizing based on pieceSize constant using v-bind */
 .piece {
   width: v-bind('pieceSize + "px"');
@@ -234,5 +243,14 @@ onMounted(() => {
 
 .animate-fade-in {
   animation: fadeIn 2s ease-in-out;
+}
+
+/* Custom font styles */
+.birthday-title {
+  font-family: 'AaKeAiBeiTianTianQuanZhuLiao', sans-serif;
+}
+
+.birthday-message {
+  font-family: 'AaKeAiBeiTianTianQuanZhuLiao', sans-serif;
 }
 </style>
