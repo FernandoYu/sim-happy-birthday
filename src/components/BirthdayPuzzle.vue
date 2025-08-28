@@ -1,10 +1,14 @@
 <template>
   <div
-    class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-300 via-pink-200 to-orange-200 font-birthday space-y-20"
+    class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-300 via-pink-200 to-orange-200 font-birthday p-4 space-y-8 sm:space-y-12 md:space-y-20 overflow-auto"
   >
-    <h1 class="text-6xl font-bold text-pink-600 mb-10 birthday-title">🎁 星星生日快乐！</h1>
+    <h1
+      class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-pink-600 mb-4 sm:mb-6 md:mb-10 birthday-title text-center"
+    >
+      🎁 星星生日快乐！
+    </h1>
     <div
-      class="puzzle-size border-3 border-pink-600 rounded-xl overflow-hidden relative"
+      class="puzzle-size border-2 sm:border-3 border-pink-600 rounded-xl overflow-hidden relative mx-auto max-w-full"
       ref="puzzleRef"
     >
       <!-- Puzzle pieces (shown when game is not won) -->
@@ -47,14 +51,17 @@
         }"
       ></div>
     </div>
-    <p v-show="gameWon" class="text-7xl text-pink-700 font-bold animate-fade-in birthday-message">
+    <p
+      v-show="gameWon"
+      class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl text-pink-700 font-bold animate-fade-in birthday-message text-center px-4"
+    >
       🎉 2025生日快乐！亲爱的星星 ❤️
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, onUnmounted } from 'vue'
 
 interface PuzzlePiece {
   row: number
@@ -65,8 +72,18 @@ interface PuzzlePiece {
 
 const puzzleRef = ref<HTMLElement>()
 const size = 4 // 4x4 拼图
-const puzzleSize = 600
-const pieceSize = puzzleSize / size // Size of each piece in pixels
+const screenWidth = ref(window.innerWidth)
+
+// Responsive puzzle size
+const puzzleSize = computed(() => {
+  const padding = 32 // 32px for padding (16px on each side)
+  const viewportSize = Math.min(screenWidth.value, window.innerHeight * 0.7) // Consider height too for landscape
+  const maxSize = Math.min(viewportSize - padding, 600)
+  const minSize = 280 // Minimum size for usability
+  return Math.max(minSize, maxSize)
+})
+
+const pieceSize = computed(() => puzzleSize.value / size) // Size of each piece in pixels
 const pieces = ref<PuzzlePiece[]>([])
 const firstClick = ref<number | null>(null)
 const gameWon = ref(false)
@@ -194,8 +211,18 @@ const onDragEnd = (): void => {
   dragOverIndex.value = null
 }
 
+// Handle window resize for responsive behavior
+const handleResize = (): void => {
+  screenWidth.value = window.innerWidth
+}
+
 onMounted(() => {
   initPuzzle()
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 
@@ -209,7 +236,7 @@ onMounted(() => {
   font-display: swap;
 }
 
-/* Dynamic piece sizing based on pieceSize constant using v-bind */
+/* Dynamic piece sizing based on computed pieceSize */
 .piece {
   width: v-bind('pieceSize + "px"');
   height: v-bind('pieceSize + "px"');
@@ -248,9 +275,68 @@ onMounted(() => {
 /* Custom font styles */
 .birthday-title {
   font-family: 'AaKeAiBeiTianTianQuanZhuLiao', sans-serif;
+  line-height: 1.2;
 }
 
 .birthday-message {
   font-family: 'AaKeAiBeiTianTianQuanZhuLiao', sans-serif;
+  line-height: 1.3;
+}
+
+/* Mobile-friendly touch targets */
+@media (max-width: 768px) {
+  .piece {
+    /* Ensure pieces are easily tappable on mobile */
+    touch-action: manipulation;
+  }
+
+  .piece:hover {
+    /* Disable hover effects on touch devices */
+    transform: none;
+  }
+
+  .piece:active {
+    /* Add feedback for touch */
+    transform: scale(0.95);
+  }
+}
+
+/* Improve contrast and readability on smaller screens */
+@media (max-width: 480px) {
+  .birthday-title {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .birthday-message {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+  .birthday-title {
+    font-size: 1.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .birthday-message {
+    font-size: 1.75rem !important;
+  }
+
+  /* Reduce spacing in landscape */
+  .space-y-8 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1rem !important;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 320px) {
+  .birthday-title {
+    font-size: 1.25rem !important;
+  }
+
+  .birthday-message {
+    font-size: 1.5rem !important;
+  }
 }
 </style>
