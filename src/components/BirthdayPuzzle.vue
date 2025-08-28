@@ -91,7 +91,7 @@ const dragOverIndex = ref<number | null>(null)
 // Select a random image from the available images
 const selectRandomImage = (): void => {
   const randomIndex = Math.floor(Math.random() * puzzleImages.length)
-  selectedImage.value = `/src/assets/puzzle-images/${puzzleImages[randomIndex]}`
+  selectedImage.value = `/sim-happy-birthday/puzzle-images/${puzzleImages[randomIndex]}`
 }
 
 // 初始化拼图
